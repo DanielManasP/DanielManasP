@@ -161,6 +161,7 @@ public class Principal extends JFrame implements ActionListener, MouseListener{
 		layeredPane.add(pnInicio,BorderLayout.CENTER);
 		pnInicio.setLayout(null);
 		
+		
 		//Panel Reservas
 		pnReservas= new JPanel();
 		pnReservas.setBounds(0, 45, 854, 383);

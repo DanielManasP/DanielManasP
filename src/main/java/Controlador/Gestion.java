@@ -53,9 +53,10 @@ public class Gestion {
 	public Gestion() {
 		cargarMenus();
 		cargaTotal();
-		pruebaEmple();
+		//pruebaEmple();
 		//pruevaCli();
 		//pruebaReserva();
+		modificarEstadoPedidosM();
 		//opeMenu();
 	//	operacionesPruebas();
 	//	operacionesPedidos();
@@ -70,6 +71,12 @@ public class Gestion {
 		listaEmpleados=empleDAO.getEmpleados();
 		listaReservas= reservDAO.getReservas();
 	}
+	
+	//Pruebas metodos DAOS
+	private void pruebaPedidosR() {
+		
+	}
+	
 	private void pruebaEmple() {
 		insertaEmpleado("Ramon", 3213, "ramon", 1300f);
 		modificaEmp(1111, "Daniel MP", 321234, "manas", 2345.4f);
@@ -82,10 +89,14 @@ public class Gestion {
 		borrarClient(null);
 	}
 	private void pruebaReserva() {
-		Date fecha=  Date.valueOf("2021-12-12");
+		Date fecha=  Date.valueOf("2021-09-15");
 		//insertarReserva(10, 5, fecha, 0, 1);
-		insertarReserva(6, 1, fecha, 0, 1);
+		//(idCliente, numcomensales, fechaReserva, pase, turno);
+		//insertarReserva(6, 1, fecha, 0, 0);
+		Reservas reser=listaReservas.get(listaReservas.size()-1);
+		elminarReserva(reser);
 	}
+
 	private void opeMenu() {
 		Menus mn = menuDAO.insertMenu("Todo por el deporte", 11.4f);
 		compruebaDatoPedidos(mn.getIdMenu());
@@ -110,24 +121,7 @@ public class Gestion {
 //			System.out.println();
 //		}
 	}
-	public void listaMenus(int id) {
-		String sql= "select * from menus where idmenu="+id;
-		
-		Statement sent;
-		try {
-			sent = conexion.createStatement();
-			ResultSet res= sent.executeQuery(sql);
-			if(res.next()) {
-				System.out.println(" "+res.getInt(1));
-			}else {
-				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 	private void operacionesPedidos() {
 //		
 //		PedidosPlatos pedidosP =pedidosPDAO.insertPedidoPlato(1, 1);
@@ -166,15 +160,8 @@ public class Gestion {
 		//compruebaDatoPedidos(pedidosM.getIdPedidoMenu());
 		System.out.println();
 		System.out.println();
-		
-		if(pedidosMDAO.modificarPedidoMenu(3, 6, 7)) {
-			listaPedidosM=pedidosMDAO.getPedidosMenu();
 			
-			compruebaDatoPedidos(1);
-			System.out.println();
-		}
-		
-		if(pedidosMDAO.modificarEstadoFinalizado(3)) {
+		if(pedidosMDAO.modificarEstadoFinalizado(3,Date.valueOf("2021-12-14"))) {
 			listaPedidosM=pedidosMDAO.getPedidosMenu();
 			
 			compruebaDatoPedidos(1);
@@ -190,29 +177,14 @@ public class Gestion {
 			System.out.println();
 		}
 	}
-	public void compruebaDatoPedidos(int id) {
-		String sql= "select * from pedidosplatos where idpedidoplato="+id;
-		
-		Statement sent;
-		try {
-			sent = conexion.createStatement();
-			ResultSet res= sent.executeQuery(sql);
-			if(res.next()) {
-				System.out.println("COMPRUEBA DATOS = "+id);
-				System.out.println(" IDcliente: "+res.getInt(2));
-				System.out.println(" idplato: "+res.getInt(3));
-				System.out.println(" Estado: "+res.getInt(4));
-			}else {
-				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 	
-	//Pruebas
+	//PedidosMenus Operaciones BBDD
+	public void modificarEstadoPedidosM() {
+		if(pedidosMDAO.modificarEstadoFinalizado(3,Date.valueOf("2021-12-14"))) {
+			listaPedidosM=pedidosMDAO.getPedidosMenu();
+		}
+	}
+
 	private void operacionesPruebas() {
 		//Pruebas PLATOS
 		
@@ -241,26 +213,7 @@ public class Gestion {
 	
 		
 	}
-	public void compruebaDato(int id) {
-		String sql= "select * from platos where idplato="+id;
-		
-		Statement sent;
-		try {
-			sent = conexion.createStatement();
-			ResultSet res= sent.executeQuery(sql);
-			if(res.next()) {
-				System.out.println("COMPRUEBA DATOS = "+id);
-				System.out.println(" NOMBRE: "+res.getString(2));
-				System.out.println(" PVP: "+res.getFloat(3));
-			}else {
-				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 	
 	//Gestion Menus
 	private void cargarMenus() {
@@ -283,22 +236,10 @@ public class Gestion {
 		Reservas res= reservDAO.insertaReserva(idCliente, empleado.getIdEmple(), numcomensales, fechaReserva, preciototal, pase, turno);
 		
 	}
-	public Empleados obtenerEmpleado() {
-		Empleados empleado=null;
-		boolean mismoEmpleado=true;
+	
+	private void elminarReserva(Reservas reser) {
+		reservDAO.eliminarReserva(reser);
 		
-		do {
-			int empleAleatorio= (int) (Math.random()*listaEmpleados.size());
-			System.out.println("EMPLEADO ALEATORIO ID= "+empleAleatorio);
-			empleado=listaEmpleados.get(empleAleatorio);
-			
-			if(listaReservas.get(listaReservas.size()-1).getIdEmple()!=empleado.getIdEmple()) {
-				mismoEmpleado=false;
-				System.out.println("EL EMPLEADO ES DISTINTO AL ULTIMO");
-			}
-		}while(mismoEmpleado);
-		
-		return empleado;
 	}
 	public float calcularPrecioTotal(int idCliente) {
 		float preciototal=0;
@@ -383,7 +324,87 @@ public class Gestion {
 		menuDAO.eliminarMenu(menu);
 	}
 	
+	//Fin pruebas Operaciones BBDD
 	
+	
+	//Metodos REVISAR
+	public void compruebaDato(int id) {
+		String sql= "select * from platos where idplato="+id;
+		
+		Statement sent;
+		try {
+			sent = conexion.createStatement();
+			ResultSet res= sent.executeQuery(sql);
+			if(res.next()) {
+				System.out.println("COMPRUEBA DATOS = "+id);
+				System.out.println(" NOMBRE: "+res.getString(2));
+				System.out.println(" PVP: "+res.getFloat(3));
+			}else {
+				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	public void compruebaDatoPedidos(int id) {
+		String sql= "select * from pedidosplatos where idpedidoplato="+id;
+		
+		Statement sent;
+		try {
+			sent = conexion.createStatement();
+			ResultSet res= sent.executeQuery(sql);
+			if(res.next()) {
+				System.out.println("COMPRUEBA DATOS = "+id);
+				System.out.println(" IDcliente: "+res.getInt(2));
+				System.out.println(" idplato: "+res.getInt(3));
+				System.out.println(" Estado: "+res.getInt(4));
+			}else {
+				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void listaMenus(int id) {
+		String sql= "select * from menus where idmenu="+id;
+		
+		Statement sent;
+		try {
+			sent = conexion.createStatement();
+			ResultSet res= sent.executeQuery(sql);
+			if(res.next()) {
+				System.out.println(" "+res.getInt(1));
+			}else {
+				System.out.println("NO HA ENCONTRADO NINGUN REGISTRO");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	public Empleados obtenerEmpleado() {
+		Empleados empleado=null;
+		boolean mismoEmpleado=true;
+		
+		do {
+			int empleAleatorio= (int) (Math.random()*listaEmpleados.size());
+			System.out.println("EMPLEADO ALEATORIO ID= "+empleAleatorio);
+			empleado=listaEmpleados.get(empleAleatorio);
+			
+			if(listaReservas.get(listaReservas.size()-1).getIdEmple()!=empleado.getIdEmple()) {
+				mismoEmpleado=false;
+				System.out.println("EL EMPLEADO ES DISTINTO AL ULTIMO");
+			}
+		}while(mismoEmpleado);
+		
+		return empleado;
+	}
 	
 	
 	//Inicio Session

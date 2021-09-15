@@ -258,4 +258,8 @@ public class ClientesDAO {
 		}
 		
 	}
+	public boolean inicioSesionCliente(String email, String pass) {
+		
+		return true;
+	}
 }

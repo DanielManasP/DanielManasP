@@ -1,5 +1,6 @@
 package DAOs;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,10 +41,10 @@ public class PedidosM_DAO {
 		return listaM;
 	}
 	//Inserta un menu
-	public PedidosMenus insertPedidoMenu(int idCliente,int idMenu) {
+	public PedidosMenus insertPedidoMenu(int idCliente,int idMenu,Date fecha) {
 		PedidosMenus pMenus=null;
 		int estado=1;
-		String sql ="insert into PedidosMenus values (?,?,?,?)";
+		String sql ="insert into PedidosMenus values (?,?,?,?,?)";
 		String sqlID="select max(idpedidoMenu) from pedidosmenus";
 		
 		try {	
@@ -60,7 +61,8 @@ public class PedidosM_DAO {
 			sent.setInt(1, id);
 			sent.setInt(2, idCliente);
 			sent.setInt(3, idMenu);
-			sent.setInt(4, estado);
+			sent.setDate(4, fecha);
+			sent.setInt(5, estado);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
@@ -94,18 +96,19 @@ public class PedidosM_DAO {
 		return eleminado;
 		
 	}
-	//Modifica el MENU  en funcion del cliente y el id del pedido
-	public boolean modificarPedidoMenu(int idCliente, int idPedidoM, int idMenu) {
+	//Este metodo esta en DESHUSO, el pedido no se deberia modificar
+	public boolean modificarPedidoMenu(int idCliente, int idPedidoM, int idMenu,Date fecha) {
 		boolean modificado=false;
 		String sql="update pedidosmenus set"
 				+ "  idMenu=? where idcliente=? and idpedidomenu=?"
-				+ " and estado = 1";
+				+ " and estado = 1 and fechareserva=?";
 		
 		try {
 			PreparedStatement sent= conexion.prepareStatement(sql);
 			sent.setInt(1, idMenu);
 			sent.setInt(2, idCliente);
 			sent.setInt(3, idPedidoM);
+			sent.setDate(4, fecha);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
@@ -121,15 +124,16 @@ public class PedidosM_DAO {
 		return modificado;
 	}
 	//Modifica el estado del menu
-	public boolean modificarEstadoFinalizado(int idCliente) {
+	public boolean modificarEstadoFinalizado(int idCliente,Date fecha) {
 		boolean modificado=false;
 		String sql="update pedidosmenus set"
-				+ "  estado=0 where idcliente=? and estado=1";
+				+ "  estado=0 where idcliente=? and fechareserva=? and estado=1 ";
 		
 		try {
 			PreparedStatement sent= conexion.prepareStatement(sql);
 			
 			sent.setInt(1, idCliente);
+			sent.setDate(2, fecha);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {

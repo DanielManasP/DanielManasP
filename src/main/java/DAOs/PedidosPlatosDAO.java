@@ -1,5 +1,6 @@
 package DAOs;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,10 +40,10 @@ public class PedidosPlatosDAO {
 		return listaP;
 	}
 	//Inserta un menu
-	public PedidosPlatos insertPedidoPlato(int idCliente,int idPlato) {
+	public PedidosPlatos insertPedidoPlato(int idCliente,int idPlato,Date fecha) {
 		PedidosPlatos pPlato=null;
 		int estado=1;
-		String sql ="insert into pedidosplatos values (?,?,?,?)";
+		String sql ="insert into pedidosplatos values (?,?,?,?,?)";
 		String sqlID="select max(idpedidoplato) from pedidosplatos";
 		
 		try {	
@@ -59,7 +60,8 @@ public class PedidosPlatosDAO {
 			sent.setInt(1, id);
 			sent.setInt(2, idCliente);
 			sent.setInt(3, idPlato);
-			sent.setInt(4, estado);
+			sent.setDate(4, fecha);
+			sent.setInt(5, estado);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
@@ -120,15 +122,16 @@ public class PedidosPlatosDAO {
 		return modificado;
 	}
 	//Modifica el estado del menu
-	public boolean modificarEstadoFinalizado(int idCliente) {
+	public boolean modificarEstadoFinalizado(int idCliente,Date fecha) {
 		boolean modificado=false;
 		String sql="update pedidosplatos set"
-				+ "  estado=0 where idcliente=? and estado=1";
+				+ "  estado=0 where idcliente=? and fechareserva=? and estado=1";
 		
 		try {
 			PreparedStatement sent= conexion.prepareStatement(sql);
 			
 			sent.setInt(1, idCliente);
+			sent.setDate(2, fecha);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {

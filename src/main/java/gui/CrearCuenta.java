@@ -207,8 +207,7 @@ public class CrearCuenta extends JDialog {
 	                  + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 	
 	  // El email a validar
-	  String email = "info@programacionextrema.com";
-	
+	 	
 	  Matcher mather = pattern.matcher(mail);
 	
 	  if (mather.find() == true) {
