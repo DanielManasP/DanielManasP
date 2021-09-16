@@ -1,11 +1,8 @@
-package Controlador;
+package Modelo;
 
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
-
-
-import Modelo.Menus;
 
 public class tablaMenus extends AbstractTableModel {
 

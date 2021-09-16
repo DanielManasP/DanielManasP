@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 
 
@@ -23,6 +24,9 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.Connection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +41,14 @@ public class CrearCuenta extends JDialog {
 	private Gestion gestion;
 	private Connection conexion=Conexion.conexionmysql();
 	private JTextField txtNombre;
-
+	private JTextField txtConfirmaPass;
+	
+	private final int MENSAJE_OK=0;
+	private final int MENSAJE_ERROR_BBDD=1;
+	private final int MENSAJE_ERROR_MAIL=2;
+	private final int MENSAJE_ERROR_PASS1=3;
+	private final int MENSAJE_ERROR_PASS2=4;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -73,6 +84,22 @@ public class CrearCuenta extends JDialog {
 			gbc_txtNombre.fill = GridBagConstraints.HORIZONTAL;
 			gbc_txtNombre.gridx = 3;
 			gbc_txtNombre.gridy = 1;
+			txtNombre.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e)
+				   {
+				      char caracter = e.getKeyChar();
+
+				      // Verificar si la tecla pulsada no es un digito
+				      if(((caracter < '0') ||
+				         (caracter > '9')) &&
+				         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+				      {
+				          
+				      }else {
+				    	  e.consume();
+				      }
+				   }
+			});
 			contentPanel.add(txtNombre, gbc_txtNombre);
 			txtNombre.setColumns(10);
 		}
@@ -103,7 +130,7 @@ public class CrearCuenta extends JDialog {
 			contentPanel.add(lbPass, gbc_lbPass);
 		}
 		{
-			txtPass = new JTextField();
+			txtPass = new JPasswordField();
 			GridBagConstraints gbc_txtPass = new GridBagConstraints();
 			gbc_txtPass.insets = new Insets(0, 0, 5, 5);
 			gbc_txtPass.fill = GridBagConstraints.HORIZONTAL;
@@ -113,21 +140,57 @@ public class CrearCuenta extends JDialog {
 			txtPass.setColumns(10);
 		}
 		{
+			JLabel lbConfirma = new JLabel("Confirma pass :");
+			GridBagConstraints gbc_lbConfirma = new GridBagConstraints();
+			gbc_lbConfirma.insets = new Insets(0, 0, 5, 5);
+			gbc_lbConfirma.gridx = 1;
+			gbc_lbConfirma.gridy = 4;
+			contentPanel.add(lbConfirma, gbc_lbConfirma);
+		}
+		{
+			txtConfirmaPass = new JPasswordField();
+			GridBagConstraints gbc_txtConfirmaPass = new GridBagConstraints();
+			gbc_txtConfirmaPass.insets = new Insets(0, 0, 5, 5);
+			gbc_txtConfirmaPass.fill = GridBagConstraints.HORIZONTAL;
+			gbc_txtConfirmaPass.gridx = 3;
+			gbc_txtConfirmaPass.gridy = 4;
+			contentPanel.add(txtConfirmaPass, gbc_txtConfirmaPass);
+			txtConfirmaPass.setColumns(10);
+		}
+		{
 			JLabel lbTlf = new JLabel("Tlf :");
 			GridBagConstraints gbc_lbTlf = new GridBagConstraints();
-			gbc_lbTlf.insets = new Insets(0, 0, 5, 5);
+			gbc_lbTlf.insets = new Insets(0, 0, 0, 5);
 			gbc_lbTlf.gridx = 1;
-			gbc_lbTlf.gridy = 4;
+			gbc_lbTlf.gridy = 5;
 			contentPanel.add(lbTlf, gbc_lbTlf);
 		}
 		{
 			txtTlf = new JTextField();
 			GridBagConstraints gbc_txtTlf = new GridBagConstraints();
 			gbc_txtTlf.anchor = GridBagConstraints.NORTH;
-			gbc_txtTlf.insets = new Insets(0, 0, 5, 5);
+			gbc_txtTlf.insets = new Insets(0, 0, 0, 5);
 			gbc_txtTlf.fill = GridBagConstraints.HORIZONTAL;
 			gbc_txtTlf.gridx = 3;
-			gbc_txtTlf.gridy = 4;
+			gbc_txtTlf.gridy = 5;
+	
+			txtTlf.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e)
+				   {
+				      char caracter = e.getKeyChar();
+				      
+				      // Verificar si la tecla pulsada no es un digito
+				      if(txtTlf.getText().length()>8) {
+				    	  e.consume();
+				      }
+				      if(((caracter < '0') ||
+				         (caracter > '9')) &&
+				         (caracter != '\b'))  /*corresponde a BACK_SPACE*/
+				      {
+				         e.consume();  // ignorar el evento de teclado
+				      }
+				   }
+			});
 			contentPanel.add(txtTlf, gbc_txtTlf);
 			txtTlf.setColumns(10);
 		}
@@ -169,29 +232,36 @@ public class CrearCuenta extends JDialog {
                     "CAMPOS VACIOS", JOptionPane.WARNING_MESSAGE);
 		}else {
 			if(esMail(txtEmail.getText())) {
-				if(gestion.crearCliente(txtNombre.getText(),txtEmail.getText(), txtPass.getText(), txtTlf.getText())) {
-					JOptionPane.showMessageDialog(this, "Usuario creado con exito",
-		                    "USUARIO CREADO", JOptionPane.INFORMATION_MESSAGE);
-					this.dispose();
+				if(compruebaPass(txtPass.getText())) {
+					if(txtPass.getText().equals(txtConfirmaPass.getText())){
+						if(gestion.crearCliente(txtNombre.getText(),txtEmail.getText(), txtPass.getText(), txtTlf.getText())) {
+							
+							mensajes(MENSAJE_OK);
+							this.dispose();
+						}else {
+							mensajes(MENSAJE_ERROR_BBDD);
+							txtEmail.setText("");
+							txtNombre.setText("");
+							txtPass.setText("");
+							txtTlf.setText("");
+						}
+					}else {
+						mensajes(MENSAJE_ERROR_PASS2);
+						txtPass.setText("");
+						txtConfirmaPass.setText("");
+						}
 				}else {
-					JOptionPane.showMessageDialog(this, "El usuario ya existe, no se ha podido registrar",
-		                    "ERROR AL CREAR", JOptionPane.ERROR_MESSAGE);
-					txtEmail.setText("");
-					txtNombre.setText("");
-					txtEmail.setBackground(Color.WHITE);
+					mensajes(MENSAJE_ERROR_PASS1);
 					txtPass.setText("");
-					txtTlf.setText("");
-				}
+					txtConfirmaPass.setText("");
+				}	
 			}else {
 				txtEmail.setBackground(Color.RED);
 				txtEmail.setForeground(Color.WHITE);
-				JOptionPane.showMessageDialog(this, "Introduzca un correo electronico valido. Ejem: xxx@gmail.com",
-	                    "ERROR EMAIL", JOptionPane.ERROR_MESSAGE);
+				mensajes(MENSAJE_ERROR_MAIL);
 				txtEmail.setText("");
-				txtNombre.setText("");
 				txtEmail.setBackground(Color.WHITE);
-				txtPass.setText("");
-				txtTlf.setText("");
+				
 			}
 			
 		}		
@@ -199,6 +269,50 @@ public class CrearCuenta extends JDialog {
 	private void cancela() {
 		this.dispose();
 		
+	}
+	private void mensajes(int mensaje) {
+		switch (mensaje) {
+		case 0: //OK inserta cliente
+			JOptionPane.showMessageDialog(this, "Usuario creado con exito",
+                    "USUARIO CREADO", JOptionPane.INFORMATION_MESSAGE);
+			break;
+		case 1://El usuario ya existe
+			JOptionPane.showMessageDialog(this, "El usuario ya existe, no se ha podido registrar",
+                    "ERROR AL CREAR", JOptionPane.ERROR_MESSAGE);
+			txtEmail.setText("");
+			txtNombre.setText("");
+			txtEmail.setBackground(Color.WHITE);
+			txtPass.setText("");
+			txtTlf.setText("");
+			break;
+		case 2:
+			//El email no es correcto
+			txtEmail.setBackground(Color.RED);
+			txtEmail.setForeground(Color.WHITE);
+			JOptionPane.showMessageDialog(this, "Introduzca un correo electronico valido. Ejem: xxx@gmail.com",
+                    "ERROR EMAIL", JOptionPane.ERROR_MESSAGE);
+			txtEmail.setText("");
+			txtEmail.setBackground(Color.WHITE);
+			break;
+		case 3://EL PASSWORD debe ser mayor a 8 caracteres
+			JOptionPane.showMessageDialog(this, "La contraseña tiene que tener al menos 8 caracteres",
+                    "ERROR PASS", JOptionPane.ERROR_MESSAGE);
+			break;
+		case 4://PASSWORD no coincide
+			JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden",
+                    "ERROR PASS", JOptionPane.ERROR_MESSAGE);
+			break;
+		default:
+			break;
+		}
+	}
+	//Password no menor a 8
+	private boolean compruebaPass(String pass) {
+		boolean correcto=false;
+		if(pass.length()>7) {
+			correcto=true;
+		}
+		return correcto;
 	}
 	private boolean esMail (String mail) {
 			   // Patrón para validar el email

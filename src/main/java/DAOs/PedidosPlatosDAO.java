@@ -26,7 +26,7 @@ public class PedidosPlatosDAO {
 			ResultSet res= sent.executeQuery(sql);
 			while(res.next()) {
 				PedidosPlatos pedidosPlatos= new PedidosPlatos(res.getInt(1),
-						res.getInt(2),res.getInt(3),res.getInt(4));
+						res.getInt(2),res.getInt(3),res.getDate(4),res.getInt(5));
 				
 				listaP.add(pedidosPlatos);
 			}
@@ -65,7 +65,7 @@ public class PedidosPlatosDAO {
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
-				pPlato= new PedidosPlatos(id,idCliente, idPlato,estado);
+				pPlato= new PedidosPlatos(id,idCliente, idPlato,fecha,estado);
 			}
 			
 			sent.close();

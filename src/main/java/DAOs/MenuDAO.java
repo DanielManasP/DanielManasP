@@ -39,7 +39,7 @@ public class MenuDAO {
 		return listaM;
 	}
 	//Inserta un menu
-	public Menus insertMenu(String nombre, float precio) {
+	public Menus insertMenu(String nombre) {
 		Menus menu=null;
 		
 		String sql ="insert into menus values (?,?,?)";
@@ -58,11 +58,11 @@ public class MenuDAO {
 			PreparedStatement sent=  conexion.prepareStatement(sql);
 			sent.setInt(1, id);
 			sent.setString(2, nombre);
-			sent.setFloat(3, precio);
+			sent.setFloat(3, 0.0f);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
-				menu= new Menus(id,nombre, precio);
+				menu= new Menus(id,nombre, 0.0f);
 			}
 			
 			sent.close();
@@ -75,22 +75,44 @@ public class MenuDAO {
 	public boolean eliminarMenu(Menus menu) {
 		boolean eleminado=false;
 		String sql="delete from Menus where idmenu=?";
+		if(elminarMenusTablas(menu.getIdMenu())) {
+			try {
+				PreparedStatement sent= conexion.prepareStatement(sql);
+				sent.setInt(1, menu.getIdMenu());
+				
+				int filas= sent.executeUpdate();
+				if(filas>0) {
+					eleminado=true;
+				}
+				sent.close();
+			}catch (SQLException e) {
+				Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, e);
+			}
+		}
+		return eleminado;
+		
+	}
+	public boolean elminarMenusTablas(int idmenu) {
+		boolean correcto=false;
+		String sql="delete from pedidosmenus where idmenu="+idmenu;
+		String sql1="delete from platosmenu where idmenu="+idmenu;
 		
 		try {
-			PreparedStatement sent= conexion.prepareStatement(sql);
-			sent.setInt(1, menu.getIdMenu());
-			
-			int filas= sent.executeUpdate();
-			if(filas>0) {
-				eleminado=true;
+			Statement sent= (Statement) conexion.createStatement();
+			int filasPedidos=sent.executeUpdate(sql);
+			int filasPlatosM=sent.executeUpdate(sql1);
+			if(filasPlatosM>0) {
+				if(filasPedidos>0) {
+					correcto=true;
+				}		
 			}
 			sent.close();
-		}catch (SQLException e) {
+			
+		} catch (SQLException e) {
 			Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, e);
 		}
 		
-		return eleminado;
-		
+		return correcto;
 	}
 	public boolean modificarPrecioMenu(int id,float precio) {
 		boolean modificado=false;
@@ -109,8 +131,6 @@ public class MenuDAO {
 		}catch (SQLException e) {
 			Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, e);
 		}
-		
-		
 		return modificado;
 	}
 }

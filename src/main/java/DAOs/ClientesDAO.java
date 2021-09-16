@@ -161,8 +161,8 @@ public class ClientesDAO {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(ClientesDAO.class.getName()).log(Level.SEVERE, null, e);
+
 		}
 		return existe;
 	}
@@ -176,9 +176,6 @@ public class ClientesDAO {
 		try {
 
 			updateMenu = "update pedidosmenus set idcliente=1 where idcliente= "+idcliente;
-//			PreparedStatement sentM = conexion.prepareStatement(updateMenu);
-//			sentM.setInt(1, 1);
-//			sentM.setInt(2, idcliente);
 			Statement sentM= (Statement) conexion.createStatement();
 			
 			int filasM = sentM.executeUpdate(updateMenu);
@@ -188,9 +185,6 @@ public class ClientesDAO {
 			sentM.close();
 
 			updatePlato = "update pedidosplatos set idcliente=1 where idcliente="+idcliente;
-//			PreparedStatement sentP = conexion.prepareStatement(updatePlato);
-//			sentP.setInt(1, 1);
-//			sentP.setInt(2, idcliente);
 			Statement sentP= (Statement) conexion.createStatement();
 			int filasP = sentP.executeUpdate(updatePlato);
 			if (filasP > 0) {
@@ -233,8 +227,8 @@ public class ClientesDAO {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(ClientesDAO.class.getName()).log(Level.SEVERE, null, e);
+
 		}
 		return tiene;
 	}
@@ -253,13 +247,9 @@ public class ClientesDAO {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(ClientesDAO.class.getName()).log(Level.SEVERE, null, e);
+
 		}
 		
-	}
-	public boolean inicioSesionCliente(String email, String pass) {
-		
-		return true;
 	}
 }

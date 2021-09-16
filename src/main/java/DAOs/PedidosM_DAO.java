@@ -27,7 +27,7 @@ public class PedidosM_DAO {
 			ResultSet res= sent.executeQuery(sql);
 			while(res.next()) {
 				PedidosMenus pedidosMenus= new PedidosMenus(res.getInt(1),
-						res.getInt(2),res.getInt(3),res.getInt(4));
+						res.getInt(2),res.getInt(3),res.getDate(4),res.getInt(5));
 				
 				listaM.add(pedidosMenus);
 			}
@@ -66,7 +66,7 @@ public class PedidosM_DAO {
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
-				pMenus= new PedidosMenus(id,idCliente, idMenu,estado);
+				pMenus= new PedidosMenus(id,idCliente, idMenu,fecha,estado);
 			}
 			
 			sent.close();
@@ -118,8 +118,7 @@ public class PedidosM_DAO {
 		}catch (SQLException e) {
 			Logger.getLogger(PedidosM_DAO.class.getName()).log(Level.SEVERE, null, e);
 		}
-		//El mensaje deberia cogerse con el return, en caso falso se dice
-		// el pedido no existe o no esta activo
+
 		
 		return modificado;
 	}

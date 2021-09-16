@@ -1,19 +1,23 @@
 package Modelo;
 
+import java.sql.Date;
+
 public class PedidosMenus {
 	
 	private int idPedidoMenu;
 	private int idCliente;
 	private int idMenu;
+	private Date fechareserva;
 	private int estado; // EStado 0 pedido Finalizado, estado 1 pedido Activo
 	
 	
 	
-	public PedidosMenus(int idPedidoMenu, int idCliente, int idMenu, int estado) {
+	public PedidosMenus(int idPedidoMenu, int idCliente, int idMenu, Date fechareserva, int estado) {
 		super();
 		this.idPedidoMenu = idPedidoMenu;
 		this.idCliente = idCliente;
 		this.idMenu = idMenu;
+		this.fechareserva=fechareserva;
 		this.estado = estado;
 	}
 	public int getIdPedidoMenu() {
