@@ -15,6 +15,7 @@ import Modelo.Reservas;
 
 public class ReservasDAO {
 
+	private int mensaje=0;
 	Connection conexion=  (Connection) Conexion.conexionmysql();
 	
 	
@@ -109,7 +110,6 @@ public class ReservasDAO {
 			sent.close();
 		}catch (SQLException e) {
 			Logger.getLogger(ReservasDAO.class.getName()).log(Level.SEVERE, null, e);
-
 		}
 		return soloUna;
 		
@@ -117,6 +117,7 @@ public class ReservasDAO {
 	}
 	public boolean compruebaAforo(Date fecha,int turno,int pase, int numcomensales){
 		boolean lleno=false;
+		System.out.println("LA fecha en bbdd ="+fecha);
 		String sqlFecha="select sum(numcomensales) from reserva where fechareserva=? "
 				+ " and pase=? and turno=?";
 		String maxComensales= "select maximocomensales from restaurante";

@@ -20,6 +20,18 @@ public class PedidosMenus {
 		this.fechareserva=fechareserva;
 		this.estado = estado;
 	}
+	
+	
+	public Date getFechareserva() {
+		return fechareserva;
+	}
+
+
+	public void setFechareserva(Date fechareserva) {
+		this.fechareserva = fechareserva;
+	}
+
+
 	public int getIdPedidoMenu() {
 		return idPedidoMenu;
 	}

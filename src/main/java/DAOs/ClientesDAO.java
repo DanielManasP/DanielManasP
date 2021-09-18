@@ -78,18 +78,18 @@ public class ClientesDAO {
 		return cliente;
 	}
 
-	public boolean eliminarCliente(Clientes cliente) {
+	public boolean eliminarCliente(int idCliente) {
 		boolean eleminado = false;
-		if (existeClient(cliente.getIdCliente())) {
+		if (existeClient(idCliente)) {
 
 			String sql = "delete from clientes where idcliente=?";
 
 			try {
 				PreparedStatement sent = conexion.prepareStatement(sql);
-				sent.setInt(1, cliente.getIdCliente());
+				sent.setInt(1, idCliente);
 
-				cambiarClienteReservas(cliente.getIdCliente());
-				cambiarPedidosCliente(cliente.getIdCliente());
+				cambiarClienteReservas(idCliente);
+				cambiarPedidosCliente(idCliente);
 				int filas = sent.executeUpdate();
 				if (filas > 0) {
 					eleminado = true;
@@ -105,17 +105,18 @@ public class ClientesDAO {
 		return eleminado;
 	}
 
-	public boolean modificarCliente(int id, String nombre, String pass, int tlf) {
+	public boolean modificarCliente(int id, String nombre,String email, String pass, int tlf) {
 		boolean modificado = false;
 		if (existeClient(id)) {
-			String sql = "update clientes set " + "nombre=?,password=?,telefono=? where idcliente=?";
+			String sql = "update clientes set " + "nombre=?,password=?,telefono=?, email=? where idcliente=?";
 
 			try {
 				PreparedStatement sent = conexion.prepareStatement(sql);
 				sent.setString(1, nombre);
 				sent.setString(2, pass);
 				sent.setInt(3, tlf);
-				sent.setInt(4, id);
+				sent.setString(4, email);
+				sent.setInt(5, id);
 
 				int filas = sent.executeUpdate();
 				if (filas > 0) {

@@ -231,8 +231,8 @@ public class CrearCuenta extends JDialog {
 					+ " Email, Password y Tlf estan completos",
                     "CAMPOS VACIOS", JOptionPane.WARNING_MESSAGE);
 		}else {
-			if(esMail(txtEmail.getText())) {
-				if(compruebaPass(txtPass.getText())) {
+			if(gestion.esMail(txtEmail.getText())) {
+				if(gestion.compruebaPass(txtPass.getText())) {
 					if(txtPass.getText().equals(txtConfirmaPass.getText())){
 						if(gestion.crearCliente(txtNombre.getText(),txtEmail.getText(), txtPass.getText(), txtTlf.getText())) {
 							
@@ -307,28 +307,6 @@ public class CrearCuenta extends JDialog {
 		}
 	}
 	//Password no menor a 8
-	private boolean compruebaPass(String pass) {
-		boolean correcto=false;
-		if(pass.length()>7) {
-			correcto=true;
-		}
-		return correcto;
-	}
-	private boolean esMail (String mail) {
-			   // Patrón para validar el email
-	  Pattern pattern = Pattern
-	          .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-	                  + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 	
-	  // El email a validar
-	 	
-	  Matcher mather = pattern.matcher(mail);
-	
-	  if (mather.find() == true) {
-	      return true;
-	  } else {
-	     return false;
-	  }
-	}
 
 }

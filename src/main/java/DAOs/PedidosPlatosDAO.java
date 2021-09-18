@@ -95,6 +95,7 @@ public class PedidosPlatosDAO {
 		return eleminado;
 		
 	}
+	
 	//Modifica el MENU  en funcion del cliente y el id del pedido
 	public boolean modificarPedidoPlato(int idCliente, int idPedidoP, int idPlato) {
 		boolean modificado=false;

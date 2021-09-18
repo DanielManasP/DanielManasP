@@ -34,7 +34,7 @@ public class InicioSesion {
 				
 				
 			}else {
-				String sql2="select esjefe, nombre from empleados where numemple=? and password=?;";
+				String sql2="select esjefe, nombre from empleados where idempleado=? and password=?;";
 				PreparedStatement sentencia2=conexion.prepareStatement(sql2);
 				sentencia2.setString(1, email);
 				sentencia2.setString(2, pass);
