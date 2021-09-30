@@ -3,16 +3,15 @@ package Modelo;
 public class PlatosMenus {
 
 	private int idPlatoMenu;
-	private int idPlato;
 	private int idMenu;
+	private int idPlato;
 	
 	
-	
-	public PlatosMenus(int idPlatoMenu, int idPlato, int idMenu) {
+	public PlatosMenus(int idPlatoMenu, int idMenu, int idPlato) {
 		super();
 		this.idPlatoMenu = idPlatoMenu;
-		this.idPlato = idPlato;
 		this.idMenu = idMenu;
+		this.idPlato = idPlato;
 	}
 	public int getIdPlatoMenu() {
 		return idPlatoMenu;

@@ -34,19 +34,19 @@ public class InicioSesion {
 				
 				
 			}else {
-				String sql2="select esjefe, nombre from empleados where idempleado=? and password=?;";
+				String sql2="select * from empleados where idempleado=? and password=?;";
 				PreparedStatement sentencia2=conexion.prepareStatement(sql2);
 				sentencia2.setString(1, email);
 				sentencia2.setString(2, pass);
 				ResultSet res2= sentencia2.executeQuery();
 				if(res2.next()) {
-					if(res2.getInt(1)==0) {	//Es jefe
-						obj= new Empleados(res.getInt(1),res.getString(2),res.getInt(3),
-								res.getString(4),res.getDate(5),res.getFloat(6),res.getInt(7));
-					}else {					//Es empleado
-						obj= new Empleados(res.getInt(1),res.getString(2),res.getInt(3),
-								res.getString(4),res.getDate(5),res.getFloat(6),res.getInt(7));
-					}	
+//					if(res2.getInt(7)==0) {	//Es jefe
+//						obj= new Empleados(res2.getInt(1),res2.getString(2),res2.getInt(3),
+//								res2.getString(4),res2.getDate(5),res2.getFloat(6),res2.getInt(7));
+//					}else {					//Es empleado
+						obj= new Empleados(res2.getInt(1),res2.getString(2),res2.getInt(3),
+								res2.getString(4),res2.getDate(5),res2.getFloat(6),res2.getInt(7));
+//					}	
 				}
 				res2.close();
 				sentencia2.close();

@@ -39,7 +39,7 @@ public class MenuDAO {
 		return listaM;
 	}
 	//Inserta un menu
-	public Menus insertMenu(String nombre) {
+	public Menus insertMenu(String nombre, float precio) {
 		Menus menu=null;
 		
 		String sql ="insert into menus values (?,?,?)";
@@ -58,11 +58,11 @@ public class MenuDAO {
 			PreparedStatement sent=  conexion.prepareStatement(sql);
 			sent.setInt(1, id);
 			sent.setString(2, nombre);
-			sent.setFloat(3, 0.0f);
+			sent.setFloat(3, precio);
 			
 			int filas= sent.executeUpdate();
 			if(filas>0) {
-				menu= new Menus(id,nombre, 0.0f);
+				menu= new Menus(id,nombre, precio);
 			}
 			
 			sent.close();
@@ -83,6 +83,7 @@ public class MenuDAO {
 				int filas= sent.executeUpdate();
 				if(filas>0) {
 					eleminado=true;
+					System.out.println("BORRA MENU");
 				}
 				sent.close();
 			}catch (SQLException e) {
@@ -100,11 +101,11 @@ public class MenuDAO {
 		try {
 			Statement sent= (Statement) conexion.createStatement();
 			int filasPedidos=sent.executeUpdate(sql);
-			int filasPlatosM=sent.executeUpdate(sql1);
-			if(filasPlatosM>0) {
-				if(filasPedidos>0) {
+			Statement sent2= (Statement) conexion.createStatement();
+			int filasPlatosM=sent2.executeUpdate(sql1);
+			if(filasPlatosM>0 || filasPedidos>0) {
 					correcto=true;
-				}		
+					System.out.println("BORRA RELACIONADOS");
 			}
 			sent.close();
 			

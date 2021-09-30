@@ -61,7 +61,7 @@ public class PlatosMenusDAO {
 		return correcto;
 		
 	}
-	private boolean addPlatoMenu(int idmenu, int idplato) {
+	public boolean addPlatoMenu(int idmenu, int idplato) {
 		boolean correcto=false;
 		
 		String sql="insert into platosmenu set idplatosmenu=?, idmenu=?, idplato=? ";

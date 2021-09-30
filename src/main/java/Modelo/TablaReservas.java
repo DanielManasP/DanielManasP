@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public class TablaReservas extends AbstractTableModel{
-	private String [] columnas= {"Numero","NumCliente","NumeroEmpleado","Num Comensales","Fecha reserva","Precio total","Mañana/Tarde","Turno"};
+	private String [] columnas= {"Numero","NumCliente","NumeroEmpleado","Num Comensales","Fecha reserva","Precio total","Mañana=0/Tarde=1","Turno"};
 	private ArrayList<Reservas> listaReserv = new ArrayList<Reservas>();
 	@Override
 	public int getColumnCount() {

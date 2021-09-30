@@ -71,30 +71,49 @@ public class PlatosDAO {
 		}	
 		return plato;
 	}
-	public boolean eliminarPlato(Platos plato,int idPlato) {
+	public boolean eliminarPlato(Platos plato) {
 		boolean eleminado=false;
 		String sql="delete from platos where idplato=?";
 		
 		try {
-			PreparedStatement sent= conexion.prepareStatement(sql);
-			if (plato!=null){
+		
+				PreparedStatement sent= conexion.prepareStatement(sql);
 				sent.setInt(1, plato.getIdPlatos());
-			}else {
-				sent.setInt(1,idPlato);
-			}
+				
+				int filas= sent.executeUpdate();
+				if(filas>0) {
+					eleminado=true;
+				}
+				sent.close();
 			
 			
-			int filas= sent.executeUpdate();
-			if(filas>0) {
-				eleminado=true;
-			}
-			sent.close();
 		}catch (SQLException e) {
 			Logger.getLogger(PlatosDAO.class.getName()).log(Level.SEVERE, null, e);
 		}
 		
 		return eleminado;
 		
+	}
+	public boolean elminarPlatoTablas(int idPlato) {
+		boolean correcto=false;
+		String sql="delete from pedidosplatos where idPlato="+idPlato;
+		
+		
+		try {
+			Statement sent= (Statement) conexion.createStatement();
+			int filasPedidos=sent.executeUpdate(sql);
+	
+			if( filasPedidos>0) {
+					correcto=true;
+					System.out.println("BORRA RELACIONADOS");
+			}
+			sent.close();
+			
+		} catch (SQLException e) {
+			Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, e);
+		}
+		
+		return correcto;
 	}
 	public boolean modificarPrecioPlato(int id,float precio) {
 		boolean modificado=false;
