@@ -1,6 +1,6 @@
 package DAOs;
 
-import java.awt.List;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +12,7 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
 import Modelo.PlatosMenus;
-import Modelo.Reservas;
+
 
 public class PlatosMenusDAO {
 	Connection conexion=  (Connection) Conexion.conexionmysql();
@@ -92,5 +92,28 @@ public class PlatosMenusDAO {
 			e.printStackTrace();
 		}
 		return correcto;
+	}
+	public ArrayList<PlatosMenus> getPlatosPorMenu(int idMenu){
+		ArrayList<PlatosMenus> listaPM = new ArrayList<PlatosMenus>();
+		
+		try {
+			Statement sent=  (Statement) conexion.createStatement();
+			String sql="select * from platosmenu where idmenu="+idMenu;
+			ResultSet res= sent.executeQuery(sql);
+			while(res.next()) {
+				PlatosMenus reserva= 
+						new PlatosMenus(res.getInt(1),res.getInt(2)
+								,res.getInt(3));
+				
+				listaPM.add(reserva);
+			}
+			
+			res.close();
+			sent.close();
+		} catch (SQLException e) {
+			Logger.getLogger(PlatosMenusDAO.class.getName()).log(Level.SEVERE, null, e);
+		}
+		
+		return listaPM;
 	}
 }

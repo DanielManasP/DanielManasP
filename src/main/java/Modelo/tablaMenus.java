@@ -6,6 +6,10 @@ import javax.swing.table.AbstractTableModel;
 
 public class tablaMenus extends AbstractTableModel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String [] columnas= {"Numero","MENU","PRECIO"};
 	private ArrayList<Menus> listaMenus = new ArrayList<Menus>();
 	@Override

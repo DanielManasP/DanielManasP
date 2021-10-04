@@ -1,5 +1,6 @@
 package DAOs;
 
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.joda.time.LocalDate;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
@@ -72,7 +75,7 @@ Connection conexion=  (Connection) Conexion.conexionmysql();
 				
 				int filas= sent.executeUpdate();
 				if(filas>0) {
-					empleado= new Empleados(id,nombre, tlf,password,null,salario,esjefe);
+					empleado= new Empleados(id,nombre, tlf,password, Date.valueOf(LocalDate.now().toString()),salario,esjefe);
 				}			
 				sent.close();
 			}		
@@ -81,16 +84,16 @@ Connection conexion=  (Connection) Conexion.conexionmysql();
 		}	
 		return empleado;
 	}
-	public boolean eliminarEmple(Empleados empleado) {
+	public boolean eliminarEmple(int idemple) {
 		boolean eleminado=false;
-		if(existeEmple(empleado.getIdEmple())) {
-			if(cambiarEmpleReservas(empleado.getIdEmple())) {
+		if(existeEmple(idemple)) {
+			if(cambiarEmpleReservas(idemple)) {
 				
 				String sql="delete from empleados where idempleado=?";
 				
 				try {
 					PreparedStatement sent= conexion.prepareStatement(sql);
-					sent.setInt(1, empleado.getIdEmple());
+					sent.setInt(1, idemple);
 					
 					int filas= sent.executeUpdate();
 					if(filas>0) {
@@ -136,6 +139,8 @@ Connection conexion=  (Connection) Conexion.conexionmysql();
 		
 		return modificado;
 	}
+
+	
 	//Metodos  
 	public boolean existeEmple(int idemple) {
 		boolean existe=false;

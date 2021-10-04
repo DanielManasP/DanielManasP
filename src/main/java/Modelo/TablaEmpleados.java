@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public class TablaEmpleados extends AbstractTableModel  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String [] columnas= {"Numero","NOMBRE","TLF","","FECHA CONTRATACION","SALARIO","ESJEFE"};
 	
 	private ArrayList<Empleados> listaEmples = new ArrayList<Empleados>();

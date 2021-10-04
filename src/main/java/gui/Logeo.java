@@ -1,12 +1,16 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
@@ -14,12 +18,7 @@ import javax.swing.border.EmptyBorder;
 import Controlador.Gestion;
 
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,6 +27,11 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.Font;
+import java.awt.Color;
 
 public class Logeo extends JDialog {
 
@@ -35,11 +39,10 @@ public class Logeo extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel();
+	private final JPanel contentPanel;
 	private JTextField txtEmail;
 	private JPasswordField textPass;
-	private String em;
-	private String pas;
+
 	private Gestion gestion;
 
 	/**
@@ -52,23 +55,36 @@ public class Logeo extends JDialog {
 	 */
 	public Logeo(Frame parent, boolean modal,Gestion gest) {
 		super(parent,modal);
+		 ImageIcon icon = new ImageIcon(getClass().getResource("/gui/resources/imagenInicioSes.jpg"));
+	     final Image image = icon.getImage();
+	       
+		setIconImage(image);
 		gestion= gest;
 		setBounds(100, 100, 450, 300);
+		setLocationRelativeTo(null);
+		contentPanel= new JPanel() {
+			  public void paintComponent(Graphics g){
+	                g.drawImage(image, 0,0,getWidth(),getHeight(), this);
+	            }
+		};
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
-		 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-	     setUndecorated(true);
+	
+		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+	    setUndecorated(true);
 		
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{43, 64, 0, 207, 32, 0, 0};
+		gbl_contentPanel.columnWidths = new int[]{81, 83, 12, 191, 32, 0, 0};
 		gbl_contentPanel.rowHeights = new int[]{38, 0, 23, 0, 0, 0, 0, 0, 0, 0};
 		gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
+		
 		{
 			JLabel lbInicio = new JLabel("INICIO DE SESION");
+			lbInicio.setForeground(new Color(224, 255, 255));
+			lbInicio.setFont(new Font("Tw Cen MT", Font.BOLD, 15));
 			GridBagConstraints gbc_lbInicio = new GridBagConstraints();
 			gbc_lbInicio.insets = new Insets(0, 0, 5, 5);
 			gbc_lbInicio.gridx = 3;
@@ -77,6 +93,8 @@ public class Logeo extends JDialog {
 		}
 		{
 			JLabel email = new JLabel("Usuario :");
+			email.setForeground(new Color(224, 255, 255));
+			email.setFont(new Font("Tw Cen MT", Font.BOLD, 14));
 			GridBagConstraints gbc_email = new GridBagConstraints();
 			gbc_email.insets = new Insets(0, 0, 5, 5);
 			gbc_email.gridx = 1;
@@ -87,6 +105,7 @@ public class Logeo extends JDialog {
 		}
 		{
 			txtEmail = new JTextField();
+			txtEmail.setFont(new Font("Tw Cen MT", Font.PLAIN, 14));
 			GridBagConstraints gbc_textEm = new GridBagConstraints();
 			gbc_textEm.insets = new Insets(0, 0, 5, 5);
 			gbc_textEm.fill = GridBagConstraints.HORIZONTAL;
@@ -97,6 +116,8 @@ public class Logeo extends JDialog {
 		}
 		{
 			JLabel pass = new JLabel("Password :");
+			pass.setForeground(new Color(224, 255, 255));
+			pass.setFont(new Font("Tw Cen MT", Font.BOLD, 14));
 			GridBagConstraints gbc_pass = new GridBagConstraints();
 			gbc_pass.insets = new Insets(0, 0, 5, 5);
 			gbc_pass.gridx = 1;
@@ -105,6 +126,7 @@ public class Logeo extends JDialog {
 		}
 		{
 			textPass = new JPasswordField();
+			textPass.setFont(new Font("Tw Cen MT", Font.PLAIN, 14));
 			GridBagConstraints gbc_textPass = new GridBagConstraints();
 			gbc_textPass.anchor = GridBagConstraints.NORTH;
 			gbc_textPass.insets = new Insets(0, 0, 5, 5);
@@ -116,6 +138,8 @@ public class Logeo extends JDialog {
 		}
 		{
 			JLabel lblNewLabel = new JLabel("¿No tienes cuenta? ");
+			lblNewLabel.setForeground(new Color(224, 255, 255));
+			lblNewLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 14));
 			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 			gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 			gbc_lblNewLabel.gridx = 3;
@@ -123,6 +147,7 @@ public class Logeo extends JDialog {
 			contentPanel.add(lblNewLabel, gbc_lblNewLabel);
 		}
 		JButton btnNewButton = new JButton("Crear cuenta");
+		btnNewButton.setFont(new Font("Tw Cen MT", Font.BOLD, 11));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				txtEmail.setText("");
@@ -138,10 +163,10 @@ public class Logeo extends JDialog {
 		contentPanel.add(btnNewButton, gbc_btnNewButton);
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton("Iniciar sesion");
+				okButton.setFont(new Font("Tw Cen MT", Font.BOLD, 13));
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						
@@ -150,12 +175,14 @@ public class Logeo extends JDialog {
 
 				
 				});
+				buttonPane.setLayout(new GridLayout(0, 2, 0, 0));
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Salir");
+				cancelButton.setFont(new Font("Tw Cen MT", Font.BOLD, 13));
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						System.exit(0);
@@ -184,30 +211,6 @@ public class Logeo extends JDialog {
 			textPass.setText("");
 			
 		}
-//		try {
-//			Connection conexion =
-//					DriverManager.getConnection("jdbc:mysql://192.168.1.78:3306/pruebas",
-//					"pruebas", "AsD123");
-//			String sql="select * from cliente where email=? and pass=?;";
-//			
-//			PreparedStatement sentencia=conexion.prepareStatement(sql);
-//			sentencia.setString(1, textEm.getText());
-//			sentencia.setString(2, textPass.getText());
-//			ResultSet res= sentencia.executeQuery();
-//			if(res.next()) {
-//				this.dispose();
-//			}else {
-//				 JOptionPane.showMessageDialog(this, "Compruebe su constraseña, usuario o contraseÃ±a no coinciden",
-//	                        "CONSTRASEÃ‘A INCORRECTA", JOptionPane.ERROR_MESSAGE);
-//			}	
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-		
 	}
 
 }

@@ -29,6 +29,10 @@ import javax.swing.SwingConstants;
 
 public class AddModifiPlato extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtNombre;
 	private JTextField txtPrecio;
@@ -59,7 +63,7 @@ public class AddModifiPlato extends JDialog {
 		gest = gestion;
 		nombreP = nombrePlato;
 		precioP = precio;
-
+		setLocationRelativeTo(null);
 		setBounds(100, 100, 605, 216);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

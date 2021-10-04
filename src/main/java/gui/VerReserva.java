@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+
 import java.awt.Frame;
 
 import javax.swing.JButton;
@@ -10,15 +9,12 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Controlador.Gestion;
-import Modelo.Menus;
-import Modelo.Platos;
-import Modelo.Reservas;
 import Modelo.TablaPlatos;
 import Modelo.tablaMenus;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +26,10 @@ import javax.swing.border.BevelBorder;
 
 public class VerReserva extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JPanel pnTablas = new JPanel();
 	private JTable tbMenus;
 	private JTable tbPlatos;
@@ -39,10 +39,6 @@ public class VerReserva extends JDialog {
 
 		//Mañana Turnos 1 y 2					Tardes Turnos 1 y 2
 	private String hora[][]= {{"13:00 a 14:00","14:30 a 15:30"},{"20:30 a 21:30","22:00 a 23:00"}};
-	private final int TURNO_1=0;
-	private final int TURNO_2=1;
-	private final int PASE_1=0;
-	private final int PASE_2=1;
 	private int pase=0;
 	private int turno=0;
 	
@@ -68,17 +64,17 @@ public class VerReserva extends JDialog {
 		super(frame,model);
 		getContentPane().setBackground(new Color(128, 128, 128));
 		this.gestion=gestion;
-		setBounds(900, 100, 866, 480);
+		setBounds(900, 100, 866, 365);
 		getContentPane().setLayout(null);
 		pnTablas.setBackground(new Color(128, 128, 128));
-		pnTablas.setBounds(0, 0, 865, 386);
+		pnTablas.setBounds(0, 0, 865, 273);
 		pnTablas.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(pnTablas);
 		pnTablas.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setUndecorated(true);
-		
+		setLocationRelativeTo(null);
 		JScrollPane scrollPmenus = new JScrollPane();
 		scrollPmenus.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		pnTablas.add(scrollPmenus);
@@ -106,7 +102,7 @@ public class VerReserva extends JDialog {
 		tbPlatos.setModel(modeloPlatos);
 		{
 			JPanel pnBtn = new JPanel();
-			pnBtn.setBounds(0, 457, 865, 23);
+			pnBtn.setBounds(0, 343, 865, 23);
 			getContentPane().add(pnBtn);
 			pnBtn.setLayout(new GridLayout(0, 1, 0, 0));
 			{
@@ -124,7 +120,7 @@ public class VerReserva extends JDialog {
 		
 		JPanel pnInfo = new JPanel();
 		pnInfo.setBackground(new Color(240, 230, 140));
-		pnInfo.setBounds(0, 388, 865, 70);
+		pnInfo.setBounds(0, 272, 865, 70);
 		getContentPane().add(pnInfo);
 		pnInfo.setLayout(new GridLayout(0, 2, 0, 0));
 		

@@ -1,12 +1,8 @@
 package Controlador;
 
-import java.net.PortUnreachableException;
+
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +27,8 @@ public class Gestion {
 	public String emailCliente = "";
 	public int tlfCliente = 0;
 	public String passCliente = "";
+	public String fechaContrata="";
+	public String salario="";
 
 	// Precios de la reserva
 	public float precioT = 0.0f;
@@ -69,7 +67,7 @@ public class Gestion {
 	public ReservasDAO reservDAO = new ReservasDAO();
 	ArrayList<Reservas> listaReservas = new ArrayList<Reservas>();
 	ArrayList<Reservas> misReservas = new ArrayList<Reservas>();
-	ArrayList<Reservas> reservasHoy=new ArrayList<Reservas>();
+	ArrayList<Reservas> reservasHoy = new ArrayList<Reservas>();
 	public Reservas reservaSelected;
 
 	// PlatosMenus
@@ -81,30 +79,40 @@ public class Gestion {
 
 	// Variables finals
 	private final int ESTADO_ACTIVO = 1;
-	private final int ESTADO_FINALIZADO = 0;
 	private final int USUARIO_JEFE = 3;
 	private final int USUARIO_EMPLEADO = 2;
 	private final int USUARIO_CLIENTE = 1;
-	private final int MENSAJE_CORRECTO_1 = 1;
-	private final int MENSAJE_ERORR1 = 2;
-	private final int MENSAJE_ERORR2 = 3;
+
 
 	public Gestion() {
 		cargaTotal();
 	}
 
 	private void cargaTotal() {
-		listaP = platosDAO.getPlatos();
-		listaMenus = menuDAO.getMenus();
-		listaC = clientDAO.getClientes();
-		listaPedidosM = pedidosMDAO.getPedidosMenu();
-		listaPedidosP = pedidosPDAO.getPedidosPlatos();
-		listaEmpleados = empleDAO.getEmpleados();
-		listaReservas = reservDAO.getReservas();
-		listaPlatosMenu = platosMenusDAO.getPlatosMenus();
+		listaP.addAll(platosDAO.getPlatos());
+		listaMenus.addAll(menuDAO.getMenus());
+		listaC.addAll(clientDAO.getClientes());
+		listaPedidosM.addAll(pedidosMDAO.getPedidosMenu());
+		listaPedidosP.addAll(pedidosPDAO.getPedidosPlatos());
+		listaEmpleados.addAll(empleDAO.getEmpleados());
+		listaReservas.addAll(reservDAO.getReservas());
+		//listaPlatosMenu = platosMenusDAO.getPlatosMenus();
+	}
+	public void actualizaDatos() {
+		listaReservas.clear();
+		listaP.clear();
+		listaC.clear();
+		listaMenus.clear();
+		listaPedidosM.clear();
+		listaPedidosP.clear();
+		listaEmpleados.clear();
+		cargaTotal();
+	}
+	// LISTAS GET
+	public ArrayList<Empleados> getListaEmpleados() {
+		return listaEmpleados;
 	}
 
-	// LISTAS GET
 	public ArrayList<Menus> getListaMenus() {
 		return listaMenus;
 	}
@@ -112,31 +120,34 @@ public class Gestion {
 	public ArrayList<Platos> getListaPlatos() {
 		return listaP;
 	}
+
 	public ArrayList<Reservas> getTodasLasReservas() {
-		
+
 		return listaReservas;
 	}
-	public  ArrayList<Reservas> getReservasPorFecha(String fecha){
-		Date dat= Date.valueOf(fecha);
-		for(Reservas r: listaReservas) {
-			if(r.getFechaReserva().compareTo(dat)==0) {
-				if(reservasHoy.size()>0) {
-					for(Reservas rHoy: reservasHoy) {
-						if(r.getIdReserva()==rHoy.getIdReserva()) {
-							
-						}else {
+
+	public ArrayList<Reservas> getReservasPorFecha(String fecha) {
+		Date dat = Date.valueOf(fecha);
+		for (Reservas r : listaReservas) {
+			if (r.getFechaReserva().compareTo(dat) == 0) {
+				if (reservasHoy.size() > 0) {
+					for (Reservas rHoy : reservasHoy) {
+						if (r.getIdReserva() == rHoy.getIdReserva()) {
+
+						} else {
 							reservasHoy.add(r);
 						}
-					}		
-				}else {
+					}
+				} else {
 					reservasHoy.add(r);
 				}
-			
+
 			}
 		}
 		return reservasHoy;
-		
+
 	}
+
 	public ArrayList<Reservas> getListaReservas() {
 		for (Reservas r : listaReservas) {
 			if (r.getIdCliente() == this.idCliente) {
@@ -156,9 +167,7 @@ public class Gestion {
 	// Fin LISTAS
 
 	// Trabajando
-	private float precioReserva = 0.0f;
-	private int pedidosReserva = 0;
-	private Date fechaReserva = null;
+
 
 	public ArrayList<Menus> menusPorClienteYreserva() {
 
@@ -270,7 +279,7 @@ public class Gestion {
 		boolean crear = false;
 
 		Platos p = null;
-	
+
 		Menus m = menuDAO.insertMenu(nombre, precio);
 		if (m != null) {
 			crear = true;
@@ -279,7 +288,7 @@ public class Gestion {
 			for (int i = 0; i < listaSeleccionMP.size(); i++) {
 				p = (Platos) listaSeleccionMP.get(i);
 				if (platosMenusDAO.addPlatoMenu(m.getIdMenu(), p.getIdPlatos())) {
-					
+
 					crear = true;
 				} else {
 					System.out.println("FALLO AÑADIR A PLATOSMENUS");
@@ -288,111 +297,132 @@ public class Gestion {
 			}
 		}
 		listaMenus.add(m);
-		listaPlatosMenu=platosMenusDAO.getPlatosMenus();
-		
+		listaPlatosMenu = platosMenusDAO.getPlatosMenus();
+
 		return crear;
 	}
+
 	public boolean eliminarMenu(int id) {
-		boolean eliminado=false;
-		Menus m=(Menus) menuPlatoSeleccionado;
-		System.out.println("MENU SELECCIONADO : "+m.getNombre());
-		if(menuDAO.eliminarMenu(m)) {
-			eliminado=true;
+		boolean eliminado = false;
+		Menus m = (Menus) menuPlatoSeleccionado;
+		System.out.println("MENU SELECCIONADO : " + m.getNombre());
+		if (menuDAO.eliminarMenu(m)) {
+			eliminado = true;
 			listaMenus.remove(id);
 			System.out.println("ESLMINA GESTION");
-		}else {
+		} else {
 			System.out.println("NO ELIMNA");
 		}
-	
+
 		return eliminado;
 	}
-	//Empleado Platos
-	public String [] devuelveNombreYprecio() {
-		String [] datos = new String [2];
-		Platos p=(Platos) menuPlatoSeleccionado;
-		datos[0] =p.getNombre();
-		datos[1] = String.valueOf(p.getPrecio());
+
+	// Empleado Platos
+	public String[] devuelveNombreYprecio() {
+		String[] datos = new String[3];
+		String nombre="";
+		float precio=0.0f;
+		int id=0;
+		if(menuPlatoSeleccionado.getClass()==Platos.class) {
+			Platos p = (Platos) menuPlatoSeleccionado;
+			nombre=p.getNombre();
+			precio=p.getPrecio();
+			id=p.getIdPlatos();
+		}else {
+			Menus m= (Menus) menuPlatoSeleccionado;
+			nombre=m.getNombre();
+			precio=m.getPrecio();
+			id=m.getIdMenu();
+		}
 		
+		datos[0] =nombre;
+		datos[1] = String.valueOf(precio);
+		datos[2] =String.valueOf(id);
+
 		return datos;
 	}
-	public boolean modificaAddPlato(String nombre, String precio,boolean modifica) {
-		boolean opera=false;
-		Platos p2=null;
-		Platos p=null;
-		
-		if(modifica) {
-			p=(Platos) menuPlatoSeleccionado;
-			if(platosDAO.modificarPrecioPlato(p.getIdPlatos(), Float.parseFloat(precio))) {
-				opera=true;
-				for(int i=0;i<listaP.size();i++) {
-					if(listaP.get(i).getIdPlatos()==p.getIdPlatos()) {
+
+	public boolean modificaAddPlato(String nombre, String precio, boolean modifica) {
+		boolean opera = false;
+		Platos p2 = null;
+		Platos p = null;
+
+		if (modifica) {
+			p = (Platos) menuPlatoSeleccionado;
+			if (platosDAO.modificarPrecioPlato(p.getIdPlatos(), Float.parseFloat(precio))) {
+				opera = true;
+				for (int i = 0; i < listaP.size(); i++) {
+					if (listaP.get(i).getIdPlatos() == p.getIdPlatos()) {
 						listaP.get(i).setPrecio(Float.parseFloat(precio));
 					}
 				}
-				 
+
 			}
-		}else {
-			p2=platosDAO.insertPlato(nombre, Float.parseFloat(precio));
-		
+		} else {
+			p2 = platosDAO.insertPlato(nombre, Float.parseFloat(precio));
+
 		}
-		if(p2!=null) {
-			opera=true;
+		if (p2 != null) {
+			opera = true;
 			listaP.add(p2);
 		}
-		
+
 		return opera;
-		
+
 	}
+
 	public boolean compruebaPlatoNoMenu() {
-		boolean sinMenu=true;
-		Platos p=(Platos) menuPlatoSeleccionado;
-		for(PlatosMenus pm: listaPlatosMenu) {
-			if(pm.getIdPlato()==p.getIdPlatos()) {
+		boolean sinMenu = true;
+		Platos p = (Platos) menuPlatoSeleccionado;
+		for (PlatosMenus pm : listaPlatosMenu) {
+			if (pm.getIdPlato() == p.getIdPlatos()) {
 				System.out.println("Tiene platos en  un menu");
-				sinMenu=false;
-			}else {
-				System.out.println("No tiene platos en  un menu "+pm.getIdPlato()+ " el id que busco es : "+p.getIdPlatos());
+				sinMenu = false;
+			} else {
+				System.out.println(
+						"No tiene platos en  un menu " + pm.getIdPlato() + " el id que busco es : " + p.getIdPlatos());
 			}
 		}
 		return sinMenu;
 	}
+
 	public boolean compruebaPlatoPedido() {
-		boolean sinPedido=true;
-		Platos p=(Platos) menuPlatoSeleccionado;
-		for(PedidosPlatos pm: listaPedidosP) {
-			if(pm.getIdPlato()==p.getIdPlatos()) {
-				sinPedido=false;
+		boolean sinPedido = true;
+		Platos p = (Platos) menuPlatoSeleccionado;
+		for (PedidosPlatos pm : listaPedidosP) {
+			if (pm.getIdPlato() == p.getIdPlatos()) {
+				sinPedido = false;
 			}
 		}
 		return sinPedido;
 	}
+
 	public boolean eleminarPedidoPlato(int id) {
-		boolean eliminado=false;
-		Platos p=(Platos) menuPlatoSeleccionado;
-		System.out.println("Plato SELECCIONADO : "+p.getNombre());
-		if(platosDAO.elminarPlatoTablas(p.getIdPlatos())) {
-			eliminado=true;
-			
+		boolean eliminado = false;
+		Platos p = (Platos) menuPlatoSeleccionado;
+		System.out.println("Plato SELECCIONADO : " + p.getNombre());
+		if (platosDAO.elminarPlatoTablas(p.getIdPlatos())) {
+			eliminado = true;
+
 			System.out.println("ESLMINA GESTION");
-		}else {
+		} else {
 			System.out.println("NO ELIMNA");
 		}
 		return eliminado;
 	}
+
 	public boolean eliminaPlato(int id) {
-		boolean eliminado=false;
-		Platos p=(Platos) menuPlatoSeleccionado;
-		System.out.println("Plato SELECCIONADO : "+p.getNombre());
-		if(platosDAO.eliminarPlato(p)) {
-			eliminado=true;
+		boolean eliminado = false;
+		Platos p = (Platos) menuPlatoSeleccionado;
+		System.out.println("Plato SELECCIONADO : " + p.getNombre());
+		if (platosDAO.eliminarPlato(p)) {
+			eliminado = true;
 			listaP.remove(id);
 			System.out.println("ESLMINA GESTION");
-		}else {
+		} else {
 			System.out.println("NO ELIMNA");
 		}
-		
-			
-	
+
 		return eliminado;
 	}
 
@@ -412,13 +442,16 @@ public class Gestion {
 		}
 		return precioT;
 	}
+
 	public void reservaSelectedEmple(int i) {
-		reservaSelected=listaReservas.get(i);
-		
+		reservaSelected = listaReservas.get(i);
+
 	}
+
 	public void reservaSelectedHoy(int i) {
-		reservaSelected=reservasHoy.get(i);
+		reservaSelected = reservasHoy.get(i);
 	}
+
 	public void reservaSelected(int i) {
 		reservaSelected = misReservas.get(i);
 		System.out.println("REserva numero : " + reservaSelected.getIdReserva());
@@ -427,11 +460,15 @@ public class Gestion {
 
 	// Clientes Operaciones BBDD
 	public void insertaClient(String nombre, String email, String pass, int tlf) {
+		Clientes cli=null;
 		if (!clientDAO.compruebaEmailCliente(email)) {
-			Clientes cli = clientDAO.insertCliente(nombre, email, pass, tlf);
-			listaC = clientDAO.getClientes();
+			cli = clientDAO.insertCliente(nombre, email, pass, tlf);
+			
 		} else {
 			System.out.println("EL EMAIL YA EXISTE");
+		}
+		if(cli!=null) {
+			listaC = clientDAO.getClientes();
 		}
 
 	}
@@ -509,9 +546,59 @@ public class Gestion {
 		return esCreada;
 	}
 
+	public boolean cambiarEstadoReserva(int id, boolean todasReservas) {
+		boolean cambia = false;
+		Reservas reser = null;
+		if (!todasReservas) {
+			for (int i = 0; i < listaReservas.size(); i++) {
+				if (listaReservas.get(i).getIdReserva() == id) {
+					reser = listaReservas.get(i);
+				}
+
+				if (reser != null) {
+					if (reservDAO.eliminarReserva(reser)) {
+						listaReservas.remove(i);
+
+					}
+				}
+
+			}
+			if (pedidosMDAO.modificarEstadoFinalizado(reser.getIdCliente(), reser.getFechaReserva())) {
+				cambia = true;
+			}
+			if (pedidosPDAO.modificarEstadoFinalizado(reser.getIdCliente(), reser.getFechaReserva())) {
+				cambia = true;
+			}
+			
+		} else {
+			for (int i = 0; i < reservasHoy.size(); i++) {
+				if (reservasHoy.get(i).getIdReserva() == id) {
+					reser = reservasHoy.get(i);
+				}
+
+				
+				if (reser != null) {
+					if (reservDAO.eliminarReserva(reser)) {
+						reservasHoy.remove(i);
+
+					}
+				}
+			}
+			if (pedidosMDAO.modificarEstadoFinalizado(reser.getIdCliente(), reser.getFechaReserva())) {
+				cambia = true;
+			}
+			if (pedidosPDAO.modificarEstadoFinalizado(reser.getIdCliente(), reser.getFechaReserva())) {
+				cambia = true;
+			}
+		}
+
+		return cambia;
+	}
+
 	public boolean borrarReser(int id) {
 		boolean borra = false;
 		Reservas r = null;
+
 		for (int i = 0; i < misReservas.size(); i++) {
 			if (misReservas.get(i).getIdReserva() == misReservas.get(id).getIdReserva()) {
 				r = misReservas.get(i);
@@ -523,6 +610,7 @@ public class Gestion {
 				}
 			}
 		}
+
 		System.out.println("REserva a borrar " + r.getIdCliente());
 		System.out.println("FECHA RESERVA " + r.getFechaReserva());
 		if (borra) {
@@ -563,6 +651,10 @@ public class Gestion {
 				}
 				idEmpleado = emple.getIdEmple();
 				nombreUsu = emple.getNombre();
+				tlfCliente=emple.getTlf();
+				passCliente=emple.getPassword();
+				fechaContrata=String.valueOf(emple.getFechaContrata());
+				salario=String.valueOf(emple.getSalario());
 			} else {
 				// Cliente
 				Clientes cli = (Clientes) obj;
@@ -602,11 +694,15 @@ public class Gestion {
 			int empleAleatorio = (int) (Math.random() * listaEmpleados.size());
 			System.out.println("EMPLEADO ALEATORIO ID= " + empleAleatorio);
 			empleado = listaEmpleados.get(empleAleatorio);
-
-			if (listaReservas.get(listaReservas.size() - 1).getIdEmple() != empleado.getIdEmple()) {
+			if (listaReservas.size() > 0) {
+				if (listaReservas.get(listaReservas.size() - 1).getIdEmple() != empleado.getIdEmple()) {
+					mismoEmpleado = false;
+					System.out.println("EL EMPLEADO ES DISTINTO AL ULTIMO");
+				}
+			} else {
 				mismoEmpleado = false;
-				System.out.println("EL EMPLEADO ES DISTINTO AL ULTIMO");
 			}
+
 		} while (mismoEmpleado);
 
 		return empleado;
@@ -614,7 +710,7 @@ public class Gestion {
 
 	public boolean compruebaPass(String pass) {
 		boolean correcto = false;
-		if (pass.length() > 7) {
+		if (pass.length() >7) {
 			correcto = true;
 		}
 		return correcto;
@@ -623,17 +719,19 @@ public class Gestion {
 	public boolean compruebaFecheHoy(int id) {
 		boolean esHoy = true;
 		Reservas r = null;
+		java.util.Date fechaHoy = new java.util.Date();
+		long timeInMilliSeconds = fechaHoy.getTime();
+		Date fechaSQL = new Date(timeInMilliSeconds);
+
 		for (int i = 0; i < misReservas.size(); i++) {
 			if (misReservas.get(i).getIdReserva() == misReservas.get(id).getIdReserva()) {
 				r = misReservas.get(i);
 			}
 		}
-		java.util.Date fechaHoy = new java.util.Date();
-		long timeInMilliSeconds = fechaHoy.getTime();
-		Date fechaSQL = new Date(timeInMilliSeconds);
 		if (r.getFechaReserva().compareTo(fechaSQL) <= 0) {
 			esHoy = false;
 		}
+
 		return esHoy;
 	}
 
@@ -716,32 +814,101 @@ public class Gestion {
 	}
 
 	// Crear Menu emplado ESTO NO SE USA AHORA
-	public boolean addMenu(String nombre, int idPlato, int idPlato2, int idPlato3, int idPlato4) {
-		boolean creaMenu = false;
+//	public boolean re(String nombre, int idPlato, int idPlato2, int idPlato3, int idPlato4) {
+//		boolean creaMenu = false;
+//
+//		float precioMenu = 0;
+//		Menus m = menuDAO.insertMenu(nombre, precioMenu);
+//		if (m != null) {
+//			if (platosMenusDAO.insertaPlatosMenu(m.getIdMenu(), idPlato, idPlato2, idPlato3, idPlato4)) {
+//				listaPlatosMenu = platosMenusDAO.getPlatosMenus();
+//				for (PlatosMenus pm : listaPlatosMenu) {
+//					if (pm.getIdMenu() == m.getIdMenu()) {
+//						for (Platos p : listaP) {
+//							if (p.getIdPlatos() == pm.getIdPlato()) {
+//								precioMenu = precioMenu + p.getPrecio();
+//							}
+//						}
+//					}
+//				}
+//				precioMenu = precioMenu - precioMenu * 0.1f;
+//				if (menuDAO.modificarPrecioMenu(m.getIdMenu(), precioMenu)) {
+//
+//				}
+//				creaMenu = true;
+//			}
+//		}
+//
+//		return creaMenu;
+//	}
 
-		float precioMenu = 0;
-		Menus m = menuDAO.insertMenu(nombre, precioMenu);
-		if (m != null) {
-			if (platosMenusDAO.insertaPlatosMenu(m.getIdMenu(), idPlato, idPlato2, idPlato3, idPlato4)) {
-				listaPlatosMenu = platosMenusDAO.getPlatosMenus();
-				for (PlatosMenus pm : listaPlatosMenu) {
-					if (pm.getIdMenu() == m.getIdMenu()) {
-						for (Platos p : listaP) {
-							if (p.getIdPlatos() == pm.getIdPlato()) {
-								precioMenu = precioMenu + p.getPrecio();
-							}
-						}
-					}
-				}
-				precioMenu = precioMenu - precioMenu * 0.1f;
-				if (menuDAO.modificarPrecioMenu(m.getIdMenu(), precioMenu)) {
+//	private boolean esCliente() {
+//		if (tipoUsuario == USU_CLIENTE) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
-				}
-				creaMenu = true;
+	public boolean modificarEmple(int id,String nombre, String pass, int tlf,String sal) {
+		boolean modifica=false;
+		if(tipoUsuario==USU_JEFE) {
+			if(empleDAO.modificarEmple(id, nombre, tlf, pass, Float.parseFloat(sal))) {
+				modifica=true;
+				listaEmpleados.clear();
+				listaEmpleados.addAll(empleDAO.getEmpleados());
+			}
+		}else {
+			if(empleDAO.modificarEmple(idEmpleado, nombre, tlf, pass, Float.parseFloat(salario))) {
+				modifica=true;
 			}
 		}
-
-		return creaMenu;
+		return modifica;
 	}
 
+	public boolean borrarEmpl(int idEmple) {
+		boolean borrado=false;
+		if(tipoUsuario==USU_JEFE) {
+			if(empleDAO.eliminarEmple(idEmple)){
+				borrado=true;
+				listaEmpleados.clear();
+				listaEmpleados.addAll(empleDAO.getEmpleados());
+			}
+		}else {
+			if(empleDAO.eliminarEmple(this.idEmpleado)){
+				borrado=true;
+			}
+		}
+		
+		return borrado;
+	}
+
+	public ArrayList<Platos> getPlatosDelMenu(String idMenu) {
+		ArrayList<PlatosMenus> listaPlatosMenus=null;
+		ArrayList<Platos> listaPlatos=new ArrayList<Platos>();
+		listaPlatosMenus=platosMenusDAO.getPlatosPorMenu(Integer.parseInt(idMenu));
+		for(PlatosMenus pm: listaPlatosMenus) {
+			for(Platos p: listaP) {
+				if(pm.getIdPlato()==p.getIdPlatos()) {
+					listaPlatos.add(p);
+				}
+			}
+		}
+		
+		return listaPlatos;
+	}
+
+	public boolean crearEmpleado(String nombre, String pass, String tlf, String salario) {
+		boolean inserta=false;
+		Empleados e=null;
+		e=empleDAO.insertaEmple(nombre, Integer.parseInt(tlf), pass, Float.parseFloat(salario));
+		if(e!=null) {
+			inserta=true;
+			listaEmpleados.add(e);
+		}
+			
+		
+		return inserta;
+	}
+	
 }

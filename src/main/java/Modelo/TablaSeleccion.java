@@ -6,7 +6,11 @@ import javax.swing.table.AbstractTableModel;
 
 public class TablaSeleccion extends AbstractTableModel{
 	
-	private String [] columnas= {"Numero","NOMBRE","PRECIO"};
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String [] columnas= {"Numero","PLATO/MENU","PRECIO"};
 	private ArrayList<Object> listaSelect = new ArrayList<Object>();
 	@Override
 	public int getColumnCount() {

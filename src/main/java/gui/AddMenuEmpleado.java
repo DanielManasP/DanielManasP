@@ -1,7 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+
 import java.awt.Frame;
 
 import javax.swing.JButton;
@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import Controlador.Gestion;
-import Modelo.MiRender;
+
 import Modelo.Platos;
 import Modelo.TablaPlatos;
 
@@ -40,6 +40,10 @@ import javax.swing.SwingConstants;
 
 public class AddMenuEmpleado extends JDialog implements MouseListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtNombre;
 	private JTextField txtPrecio;
@@ -58,7 +62,7 @@ public class AddMenuEmpleado extends JDialog implements MouseListener {
 	private JLabel plato4;
 	private ArrayList<JLabel> listaLbPlatos = new ArrayList<JLabel>();
 
-	private int platoSeleccionado = -1;
+
 	private int totalPlatos = 0;
 	/**
 	 * Launch the application.
@@ -81,13 +85,12 @@ public class AddMenuEmpleado extends JDialog implements MouseListener {
 		gest = gestion;
 		this.modeloPlatos = modeloPlatos;
 
-		mirender = new MiRender();
 
 		inicializaLbPlatos(plato1);
 		inicializaLbPlatos(plato2);
 		inicializaLbPlatos(plato3);
 		inicializaLbPlatos(plato4);
-
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setUndecorated(true);
 
@@ -180,7 +183,7 @@ public class AddMenuEmpleado extends JDialog implements MouseListener {
 					}
 				}
 				// Verificar si la tecla pulsada no es un digito
-				if (txtPrecio.getText().length() > 3) {
+				if (txtPrecio.getText().length() > 4) {
 					e.consume();
 				}
 			

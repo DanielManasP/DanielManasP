@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public class TablaReservas extends AbstractTableModel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String [] columnas= {"Numero","NumCliente","NumeroEmpleado","Num Comensales","Fecha reserva","Precio total","Mañana=0/Tarde=1","Turno"};
 	private ArrayList<Reservas> listaReserv = new ArrayList<Reservas>();
 	@Override

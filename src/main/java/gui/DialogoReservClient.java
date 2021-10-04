@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+
 import java.awt.Frame;
 
 import javax.swing.ButtonGroup;
@@ -9,20 +8,15 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import Controlador.Gestion;
 import java.awt.GridLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
+
 import java.awt.Insets;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
@@ -38,10 +32,14 @@ import javax.swing.border.BevelBorder;
 
 public class DialogoReservClient extends JDialog implements ActionListener{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private Gestion gestion;
 	private JDateChooser elegirFecha;
-	private JComboBox comboComensales;
+	private JComboBox<Integer> comboComensales;
 	private JRadioButton rbPase1;
 	private JRadioButton rbPase2;
 	private JRadioButton rbTurno1;
@@ -95,7 +93,7 @@ public class DialogoReservClient extends JDialog implements ActionListener{
 		contentPanel.setBackground(new Color(135, 206, 250));
 		contentPanel.setBounds(0, 0, 526, 226);
 		contentPanel.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setUndecorated(true);
 
@@ -150,7 +148,7 @@ public class DialogoReservClient extends JDialog implements ActionListener{
 			contentPanel.add(lbnumComensales, gbc_lbnumComensales);
 		}
 		{
-			comboComensales = new JComboBox();
+			comboComensales = new JComboBox<Integer>();
 			comboComensales.setFont(new Font("Tw Cen MT", Font.BOLD, 12));
 			comboComensales.setBackground(new Color(176, 224, 230));
 			GridBagConstraints gbc_comboComensales = new GridBagConstraints();
@@ -271,7 +269,7 @@ public class DialogoReservClient extends JDialog implements ActionListener{
 		lbFechasTurnos.setFont(new Font("Tw Cen MT", Font.BOLD, 12));
 		pnInfo.add(lbFechasTurnos);
 
-		lbInfo = new JLabel("LAS RESERVAS HAN DE CANCELARSE COMO TARDE EL DIA ANTES DE LA RESERVA");
+		lbInfo = new JLabel("LAS RESERVAS HAN DE CANCELARSE COMO TARDE EL DIA ANTES DE LA MISMA");
 		lbInfo.setBackground(new Color(135, 206, 235));
 		lbInfo.setFont(new Font("Tw Cen MT", Font.BOLD, 13));
 		lbInfo.setForeground(new Color(220, 20, 60));
@@ -281,62 +279,51 @@ public class DialogoReservClient extends JDialog implements ActionListener{
 	}
 
 	private void compruebaCamposYfecha() {
-		boolean error = false;
-//		int pase = 4;
-//		int turno = 2;
+		
 		int numComen = comboComensales.getSelectedIndex() + 1;
-//		if (rbPase1.isSelected()) {
-//			pase = 0;
-//		} else {
-//			pase = 1;
-//		}
-//		if (rbTurno1.isSelected()) {
-//			turno = 0;
-//		} else {
-//			turno = 1;
-//		}
+
 		Date fechahoy = new Date();
 		Date fechaReser = elegirFecha.getDate();
 		System.out.println(fechaReser);
 
 		long timeInMilliSeconds = fechaReser.getTime();
 		java.sql.Date date1 = new java.sql.Date(timeInMilliSeconds);
-
+		gestion.actualizaDatos();
 		if (elegirFecha.getDate() != null) {
 			if (fechaReser.compareTo(fechahoy) > 0) {
 				if (gestion.compruebaSoloUnaReserva(date1, pase)) {
 					if (gestion.compruebaAforo(date1, pase, turno, numComen)) {
 						if (gestion.crearPedidos(date1)) {
 							if (gestion.creaReserv(date1, numComen, pase, turno)) {
-								error = true;
+							
 
 								mensajes(MENSAJE_OK);
 								this.dispose();
 							} else {
-								error = false;
+							
 								mensajes(MENSAJE_ERROR_BBDD);
 							}
 						} else {
-							error = false;
+						
 							mensajes(MENSAJE_ERROR_BBDD);
 						}
 
 					} else {
-						error = false;
+					
 						mensajes(MENSAJE_ERROR_AFORO);
 					}
 				} else {
-					error = false;
+					
 					mensajes(MENSAJE_ERROR_MASDUNA);
 				}
 
 			} else {
-				error = false;
+			
 				mensajes(MENSAJE_ERROR_FECHA);
 			}
 		} else {
 			mensajes(MENSAJE_ERROR_FECHA);
-			error = false;
+		
 		}
 
 	}

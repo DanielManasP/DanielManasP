@@ -1,16 +1,19 @@
 package Modelo;
 
-import java.awt.Color;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 import javax.swing.table.AbstractTableModel;
 
 public class TablaPlatos extends AbstractTableModel {
 	
 
-	private String [] columnas= {"Numero","MENU","PRECIO"};
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String [] columnas= {"Numero","PLATO","PRECIO"};
 	private ArrayList<Platos> listaPlatos = new ArrayList<Platos>();
 	
 	

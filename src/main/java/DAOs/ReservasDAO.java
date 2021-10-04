@@ -15,7 +15,7 @@ import Modelo.Reservas;
 
 public class ReservasDAO {
 
-	private int mensaje=0;
+
 	Connection conexion=  (Connection) Conexion.conexionmysql();
 	
 	
@@ -158,8 +158,8 @@ public class ReservasDAO {
 	//Las reservas con fecha del mismo dia no se pueden borrar
 	public boolean eliminarReserva(Reservas reserva) {
 		boolean elimina=false;
-		String sql="delete from reserva where fechareserva not in (CURDATE()) "
-				+ " and idreserva="+reserva.getIdReserva();
+		String sql="delete from reserva where "
+				+ "  idreserva="+reserva.getIdReserva();
 		
 		
 		try {
